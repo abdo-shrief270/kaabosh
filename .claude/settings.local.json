@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find D:/kaabosh/resources/js -type f -name *.vue -o -name *.ts -o -name *.js)",
+      "Read(//mnt/d/**)",
+      "Bash(npm run:*)",
+      "Bash(npx vite:*)",
+      "Bash(php artisan:*)"
+    ]
+  }
+}
