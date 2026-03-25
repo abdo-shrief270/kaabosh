@@ -1,11 +1,12 @@
 import { ref, computed, watch, provide, inject, type InjectionKey, type Ref } from 'vue';
 import en from '@/locales/en';
 import ar from '@/locales/ar';
+import fr from '@/locales/fr';
 
-export type Locale = 'en' | 'ar';
+export type Locale = 'en' | 'ar' | 'fr';
 export type TranslationMessages = typeof en;
 
-const messages: Record<Locale, TranslationMessages> = { en, ar };
+const messages: Record<Locale, TranslationMessages> = { en, ar, fr };
 
 const LOCALE_KEY = 'kaabosh-locale';
 
@@ -23,7 +24,7 @@ function getNestedValue(obj: any, path: string): string | undefined {
 
 export function createLocale() {
     const stored = (typeof localStorage !== 'undefined' ? localStorage.getItem(LOCALE_KEY) : null) as Locale | null;
-    const locale = ref<Locale>(stored === 'ar' ? 'ar' : 'en');
+    const locale = ref<Locale>(stored === 'ar' ? 'ar' : stored === 'fr' ? 'fr' : 'en');
 
     const dir = computed(() => (locale.value === 'ar' ? 'rtl' : 'ltr'));
     const isRtl = computed(() => locale.value === 'ar');

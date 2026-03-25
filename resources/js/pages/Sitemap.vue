@@ -31,6 +31,35 @@ const sections = [
         ],
     },
     {
+        title: 'Blog & Updates',
+        links: [
+            { label: 'Blog', href: '/blog' },
+            { label: 'Changelog', href: '/changelog' },
+        ],
+    },
+    {
+        title: 'Use Cases',
+        links: [
+            { label: 'For Developers', href: '/for-developers' },
+            { label: 'For Enterprise', href: '/for-enterprise' },
+            { label: 'For Agencies', href: '/for-agencies' },
+        ],
+    },
+    {
+        title: 'Resources',
+        links: [
+            { label: 'Integrations', href: '/integrations' },
+            { label: 'Security', href: '/security' },
+            { label: 'Press', href: '/press' },
+        ],
+    },
+    {
+        title: 'Careers',
+        links: [
+            { label: 'Open Roles', href: '/careers' },
+        ],
+    },
+    {
         title: 'Legal',
         links: [
             { label: 'Privacy Policy', href: '/privacy-policy' },
