@@ -40,12 +40,14 @@ Route::prefix('v1')->group(function () {
     // Search
     Route::get('search', [App\Http\Controllers\Api\SearchController::class, 'search']);
 
-    // Mutations (POST)
-    Route::post('leads/waitlist', [App\Http\Controllers\Api\LeadController::class, 'waitlist']);
-    Route::post('leads/changelog-subscribe', [App\Http\Controllers\Api\LeadController::class, 'changelogSubscribe']);
-    Route::post('contact', [App\Http\Controllers\Api\ContactController::class, 'general']);
-    Route::post('contact/sales', [App\Http\Controllers\Api\ContactController::class, 'sales']);
-    Route::post('contact/chat-offline', [App\Http\Controllers\Api\ContactController::class, 'chatOffline']);
-    Route::post('careers/interest', [App\Http\Controllers\Api\CareerController::class, 'interest']);
-    Route::post('careers/{jobRole}/apply', [App\Http\Controllers\Api\CareerController::class, 'apply']);
+    // Mutations (POST) — rate limited to 30 requests per minute
+    Route::middleware('throttle:30,1')->group(function () {
+        Route::post('leads/waitlist', [App\Http\Controllers\Api\LeadController::class, 'waitlist']);
+        Route::post('leads/changelog-subscribe', [App\Http\Controllers\Api\LeadController::class, 'changelogSubscribe']);
+        Route::post('contact', [App\Http\Controllers\Api\ContactController::class, 'general']);
+        Route::post('contact/sales', [App\Http\Controllers\Api\ContactController::class, 'sales']);
+        Route::post('contact/chat-offline', [App\Http\Controllers\Api\ContactController::class, 'chatOffline']);
+        Route::post('careers/interest', [App\Http\Controllers\Api\CareerController::class, 'interest']);
+        Route::post('careers/{jobRole}/apply', [App\Http\Controllers\Api\CareerController::class, 'apply']);
+    });
 });

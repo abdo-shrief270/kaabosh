@@ -47,8 +47,10 @@ Route::get('/careers', [CareerController::class, 'index'])->name('careers.index'
 Route::get('/careers/{jobRole}', [CareerController::class, 'show'])->name('careers.show');
 Route::get('/press', PressController::class)->name('press');
 
-// Sitemap (generates static file)
+// Sitemap (generates static per-locale sitemaps + index)
 Route::get('/generate-sitemap', function () {
+    $locales = ['en', 'ar', 'fr'];
+
     $urls = collect();
 
     $urls->push(['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'weekly']);
@@ -69,20 +71,48 @@ Route::get('/generate-sitemap', function () {
     $urls->push(['loc' => route('careers.index'), 'priority' => '0.7', 'changefreq' => 'weekly']);
     $urls->push(['loc' => route('press'), 'priority' => '0.5', 'changefreq' => 'monthly']);
 
-    $content = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-    $content .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+    // Generate per-locale sitemaps
+    foreach ($locales as $locale) {
+        $content = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $content .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
 
-    foreach ($urls as $url) {
-        $content .= "  <url>\n";
-        $content .= "    <loc>{$url['loc']}</loc>\n";
-        $content .= "    <changefreq>{$url['changefreq']}</changefreq>\n";
-        $content .= "    <priority>{$url['priority']}</priority>\n";
-        $content .= "  </url>\n";
+        foreach ($urls as $url) {
+            $localeUrl = $url['loc'] . (str_contains($url['loc'], '?') ? '&' : '?') . "lang={$locale}";
+            $content .= "  <url>\n";
+            $content .= "    <loc>{$localeUrl}</loc>\n";
+            $content .= "    <changefreq>{$url['changefreq']}</changefreq>\n";
+            $content .= "    <priority>{$url['priority']}</priority>\n";
+
+            // Add xhtml:link alternates for each locale
+            foreach ($locales as $altLocale) {
+                $altUrl = $url['loc'] . (str_contains($url['loc'], '?') ? '&' : '?') . "lang={$altLocale}";
+                $content .= "    <xhtml:link rel=\"alternate\" hreflang=\"{$altLocale}\" href=\"{$altUrl}\" />\n";
+            }
+
+            $content .= "  </url>\n";
+        }
+
+        $content .= '</urlset>';
+
+        file_put_contents(public_path("sitemap-{$locale}.xml"), $content);
     }
 
-    $content .= '</urlset>';
+    // Generate sitemap index
+    $indexContent = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    $indexContent .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-    file_put_contents(public_path('sitemap.xml'), $content);
+    foreach ($locales as $locale) {
+        $sitemapUrl = url("/sitemap-{$locale}.xml");
+        $lastmod = now()->toW3cString();
+        $indexContent .= "  <sitemap>\n";
+        $indexContent .= "    <loc>{$sitemapUrl}</loc>\n";
+        $indexContent .= "    <lastmod>{$lastmod}</lastmod>\n";
+        $indexContent .= "  </sitemap>\n";
+    }
 
-    return response($content, 200, ['Content-Type' => 'application/xml']);
+    $indexContent .= '</sitemapindex>';
+
+    file_put_contents(public_path('sitemap.xml'), $indexContent);
+
+    return response($indexContent, 200, ['Content-Type' => 'application/xml']);
 })->name('generate-sitemap');

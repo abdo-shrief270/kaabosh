@@ -29,12 +29,15 @@ defineProps<{
         <div
             v-if="post.featuredImage"
             class="aspect-video overflow-hidden bg-muted"
+            style="position: relative;"
         >
             <img
                 :src="post.featuredImage"
                 :alt="post.title"
                 class="h-full w-full object-cover transition-transform group-hover:scale-105"
                 loading="lazy"
+                width="640"
+                height="360"
             />
         </div>
         <div class="p-5">

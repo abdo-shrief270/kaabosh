@@ -152,10 +152,39 @@ const showReferralName = computed(() => {
     return form.value.referralSource === 'Referral';
 });
 
+const cvError = ref('');
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_FILE_TYPES = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
+const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx'];
+
 function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement;
+    cvError.value = '';
+
     if (target.files && target.files.length > 0) {
-        form.value.cv = target.files[0];
+        const file = target.files[0];
+        const fileName = file.name.toLowerCase();
+        const hasValidExtension = ALLOWED_EXTENSIONS.some(ext => fileName.endsWith(ext));
+
+        if (!hasValidExtension && !ALLOWED_FILE_TYPES.includes(file.type)) {
+            cvError.value = 'Please upload a PDF or DOCX file.';
+            target.value = '';
+            form.value.cv = null;
+            return;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            cvError.value = 'File size must be under 5MB.';
+            target.value = '';
+            form.value.cv = null;
+            return;
+        }
+
+        form.value.cv = file;
     }
 }
 
@@ -411,6 +440,7 @@ function scrollToApplication() {
                             />
                         </div>
                         <p v-if="errors.cv" class="mt-1 text-sm text-destructive">{{ errors.cv }}</p>
+                        <p v-if="cvError" class="mt-1 text-sm text-destructive" role="alert">{{ cvError }}</p>
                     </div>
 
                     <!-- LinkedIn & Portfolio -->

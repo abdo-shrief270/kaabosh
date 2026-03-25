@@ -14,8 +14,9 @@ defineProps<{
                         v-for="(logo, i) in [...logos, ...logos]"
                         :key="`${logo.alt}-${i}`"
                         class="flex shrink-0 items-center justify-center"
+                        style="width: 120px; height: 40px;"
                     >
-                        <div class="h-8 w-24 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">
+                        <div class="h-8 w-24 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground" role="img" :aria-label="logo.alt">
                             {{ logo.alt }}
                         </div>
                     </div>

@@ -24,6 +24,8 @@ defineProps<{
                     :alt="customerName"
                     class="size-full object-cover"
                     loading="lazy"
+                    width="40"
+                    height="40"
                 />
             </div>
             <div class="min-w-0">

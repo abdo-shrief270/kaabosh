@@ -166,25 +166,27 @@ function toggleProduct(product: string) {
                             <form v-else class="space-y-6" @submit.prevent="submitGeneral">
                                 <div>
                                     <Label for="general-name">{{ t('contact.name') }}</Label>
-                                    <Input id="general-name" v-model="generalForm.name" :placeholder="t('contact.namePlaceholder')" class="mt-1" />
-                                    <p v-if="generalErrors.name" class="mt-1 text-sm text-destructive">{{ generalErrors.name }}</p>
+                                    <Input id="general-name" v-model="generalForm.name" :placeholder="t('contact.namePlaceholder')" class="mt-1" :aria-describedby="generalErrors.name ? 'general-name-error' : undefined" :aria-invalid="!!generalErrors.name" />
+                                    <p v-if="generalErrors.name" id="general-name-error" role="alert" class="mt-1 text-sm text-destructive">{{ generalErrors.name }}</p>
                                 </div>
                                 <div>
                                     <Label for="general-email">{{ t('contact.email') }}</Label>
-                                    <Input id="general-email" v-model="generalForm.email" type="email" :placeholder="t('contact.emailPlaceholder')" class="mt-1" />
-                                    <p v-if="generalErrors.email" class="mt-1 text-sm text-destructive">{{ generalErrors.email }}</p>
+                                    <Input id="general-email" v-model="generalForm.email" type="email" :placeholder="t('contact.emailPlaceholder')" class="mt-1" :aria-describedby="generalErrors.email ? 'general-email-error' : undefined" :aria-invalid="!!generalErrors.email" />
+                                    <p v-if="generalErrors.email" id="general-email-error" role="alert" class="mt-1 text-sm text-destructive">{{ generalErrors.email }}</p>
                                 </div>
                                 <div>
                                     <Label for="general-subject">{{ t('contact.subject') }}</Label>
                                     <select
                                         id="general-subject"
                                         v-model="generalForm.subject"
+                                        :aria-describedby="generalErrors.subject ? 'general-subject-error' : undefined"
+                                        :aria-invalid="!!generalErrors.subject"
                                         class="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                                     >
                                         <option value="" disabled>{{ t('contact.selectSubject') }}</option>
                                         <option v-for="opt in subjectOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                                     </select>
-                                    <p v-if="generalErrors.subject" class="mt-1 text-sm text-destructive">{{ generalErrors.subject }}</p>
+                                    <p v-if="generalErrors.subject" id="general-subject-error" role="alert" class="mt-1 text-sm text-destructive">{{ generalErrors.subject }}</p>
                                 </div>
                                 <div>
                                     <Label for="general-message">{{ t('contact.message') }}</Label>
@@ -193,9 +195,11 @@ function toggleProduct(product: string) {
                                         v-model="generalForm.message"
                                         rows="5"
                                         :placeholder="t('contact.messagePlaceholder')"
+                                        :aria-describedby="generalErrors.message ? 'general-message-error' : undefined"
+                                        :aria-invalid="!!generalErrors.message"
                                         class="mt-1 flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                                     />
-                                    <p v-if="generalErrors.message" class="mt-1 text-sm text-destructive">{{ generalErrors.message }}</p>
+                                    <p v-if="generalErrors.message" id="general-message-error" role="alert" class="mt-1 text-sm text-destructive">{{ generalErrors.message }}</p>
                                 </div>
                                 <div v-if="generalError" class="flex items-center gap-2 text-sm text-destructive">
                                     <AlertCircle class="size-4" />
@@ -222,32 +226,34 @@ function toggleProduct(product: string) {
                                 <div class="grid gap-6 sm:grid-cols-2">
                                     <div>
                                         <Label for="sales-name">{{ t('contact.name') }}</Label>
-                                        <Input id="sales-name" v-model="salesForm.name" :placeholder="t('contact.namePlaceholder')" class="mt-1" />
-                                        <p v-if="salesErrors.name" class="mt-1 text-sm text-destructive">{{ salesErrors.name }}</p>
+                                        <Input id="sales-name" v-model="salesForm.name" :placeholder="t('contact.namePlaceholder')" class="mt-1" :aria-describedby="salesErrors.name ? 'sales-name-error' : undefined" :aria-invalid="!!salesErrors.name" />
+                                        <p v-if="salesErrors.name" id="sales-name-error" role="alert" class="mt-1 text-sm text-destructive">{{ salesErrors.name }}</p>
                                     </div>
                                     <div>
                                         <Label for="sales-email">{{ t('contact.email') }}</Label>
-                                        <Input id="sales-email" v-model="salesForm.email" type="email" :placeholder="t('contact.emailCompanyPlaceholder')" class="mt-1" />
-                                        <p v-if="salesErrors.email" class="mt-1 text-sm text-destructive">{{ salesErrors.email }}</p>
+                                        <Input id="sales-email" v-model="salesForm.email" type="email" :placeholder="t('contact.emailCompanyPlaceholder')" class="mt-1" :aria-describedby="salesErrors.email ? 'sales-email-error' : undefined" :aria-invalid="!!salesErrors.email" />
+                                        <p v-if="salesErrors.email" id="sales-email-error" role="alert" class="mt-1 text-sm text-destructive">{{ salesErrors.email }}</p>
                                     </div>
                                 </div>
                                 <div class="grid gap-6 sm:grid-cols-2">
                                     <div>
                                         <Label for="sales-company">{{ t('contact.company') }}</Label>
-                                        <Input id="sales-company" v-model="salesForm.company" :placeholder="t('contact.companyPlaceholder')" class="mt-1" />
-                                        <p v-if="salesErrors.company" class="mt-1 text-sm text-destructive">{{ salesErrors.company }}</p>
+                                        <Input id="sales-company" v-model="salesForm.company" :placeholder="t('contact.companyPlaceholder')" class="mt-1" :aria-describedby="salesErrors.company ? 'sales-company-error' : undefined" :aria-invalid="!!salesErrors.company" />
+                                        <p v-if="salesErrors.company" id="sales-company-error" role="alert" class="mt-1 text-sm text-destructive">{{ salesErrors.company }}</p>
                                     </div>
                                     <div>
                                         <Label for="sales-team">{{ t('contact.teamSize') }}</Label>
                                         <select
                                             id="sales-team"
                                             v-model="salesForm.teamSize"
+                                            :aria-describedby="salesErrors.teamSize ? 'sales-team-error' : undefined"
+                                            :aria-invalid="!!salesErrors.teamSize"
                                             class="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                                         >
                                             <option value="" disabled>{{ t('contact.selectTeamSize') }}</option>
                                             <option v-for="opt in teamSizeOptions" :key="opt" :value="opt">{{ opt }}</option>
                                         </select>
-                                        <p v-if="salesErrors.teamSize" class="mt-1 text-sm text-destructive">{{ salesErrors.teamSize }}</p>
+                                        <p v-if="salesErrors.teamSize" id="sales-team-error" role="alert" class="mt-1 text-sm text-destructive">{{ salesErrors.teamSize }}</p>
                                     </div>
                                 </div>
                                 <div>

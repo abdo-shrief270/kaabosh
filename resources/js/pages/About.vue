@@ -74,7 +74,7 @@ const displayMilestones = computed(() => props.milestones ?? [
                         </div>
                     </div>
                     <div class="flex aspect-video items-center justify-center rounded-xl border bg-muted/30">
-                        <img src="/images/about/team-photo.jpg" alt="Kaabosh team" class="h-full w-full rounded-lg object-cover" loading="lazy" />
+                        <img src="/images/about/team-photo.jpg" alt="Kaabosh team" class="h-full w-full rounded-lg object-cover" loading="eager" fetchpriority="high" />
                     </div>
                 </div>
             </div>

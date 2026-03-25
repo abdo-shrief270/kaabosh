@@ -193,7 +193,8 @@ function copyLink() {
                 :src="post.featuredImage"
                 :alt="post.title"
                 class="aspect-video w-full object-cover"
-                loading="lazy"
+                loading="eager"
+                fetchpriority="high"
             />
         </div>
 

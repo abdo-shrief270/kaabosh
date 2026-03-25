@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#f1f5f9"/>
+  <rect x="40" y="40" width="1120" height="520" rx="8" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="600" y="310" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">CloudVault Sharing</text>
+</svg>

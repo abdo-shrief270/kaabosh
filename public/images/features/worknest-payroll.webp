@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#f8fafc"/>
+  <rect x="50" y="50" width="700" height="400" rx="8" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+  <text x="400" y="260" text-anchor="middle" fill="#ec4899" font-family="system-ui" font-size="20" font-weight="bold">Payroll</text>
+</svg>

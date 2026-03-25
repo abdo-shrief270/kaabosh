@@ -123,6 +123,7 @@ const displayTrustLogos = computed(() => props.trustLogos ?? [
                             :alt="product.name"
                             class="rounded-lg w-full"
                             loading="eager"
+                            fetchpriority="high"
                         />
                     </div>
                 </div>
