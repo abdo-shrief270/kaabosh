@@ -17,10 +17,20 @@ const productLinks = computed(() => [
 const companyLinks = computed(() => [
     { label: t('nav.about'), href: '/about' },
     { label: t('nav.blog'), href: '/blog' },
+    { label: 'Changelog', href: '/changelog' },
     { label: t('footer.careers'), href: '/careers' },
     { label: t('footer.press'), href: '/press' },
     { label: t('nav.contact'), href: '/contact' },
 ]);
+
+const resourceLinks = [
+    { label: 'For Developers', href: '/for-developers' },
+    { label: 'For Enterprise', href: '/for-enterprise' },
+    { label: 'For Agencies', href: '/for-agencies' },
+    { label: 'Integrations', href: '/integrations' },
+    { label: 'Security', href: '/security' },
+    { label: 'Sitemap', href: '/sitemap' },
+];
 
 const legalLinks = computed(() => [
     { label: t('footer.privacyPolicy'), href: '/privacy-policy' },
@@ -42,7 +52,7 @@ const emit = defineEmits<{
 <template>
     <footer class="border-t bg-muted/30">
         <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
                 <!-- Company Info -->
                 <div>
                     <Link
@@ -96,6 +106,21 @@ const emit = defineEmits<{
                     <h3 class="mb-4 text-sm font-semibold">{{ t('footer.companyTitle') }}</h3>
                     <ul class="space-y-2.5">
                         <li v-for="link in companyLinks" :key="link.href">
+                            <Link
+                                :href="link.href"
+                                class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                {{ link.label }}
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div>
+                    <h3 class="mb-4 text-sm font-semibold">Resources</h3>
+                    <ul class="space-y-2.5">
+                        <li v-for="link in resourceLinks" :key="link.href">
                             <Link
                                 :href="link.href"
                                 class="text-sm text-muted-foreground transition-colors hover:text-foreground"

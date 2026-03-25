@@ -9,10 +9,16 @@ import { ref, computed } from 'vue';
 import { useLocale } from '@/composables/useLocale';
 
 const props = defineProps<{
-    entries?: Array<{
+    entries?: Record<string, Array<{
+        release_date: string;
+        product: { name: string };
+        category: string;
+        title: string;
+        description: string;
+    }>> | Array<{
         date: string;
-        product: 'CRM' | 'Analytics' | 'Helpdesk';
-        category: 'New' | 'Improved' | 'Fixed';
+        product: string;
+        category: string;
         title: string;
         description: string;
     }>;
@@ -52,7 +58,28 @@ const productColors: Record<Product, string> = {
     Helpdesk: 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200 dark:border-rose-800',
 };
 
-const entries = computed<ChangelogEntry[]>(() => props.entries ?? [
+function normalizeEntries(raw: typeof props.entries): ChangelogEntry[] {
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw as ChangelogEntry[];
+    // Backend sends grouped object: { "March 2026": [{ release_date, product: { name }, category, ... }] }
+    const flat: ChangelogEntry[] = [];
+    for (const items of Object.values(raw)) {
+        for (const item of items) {
+            flat.push({
+                date: item.release_date,
+                product: (typeof item.product === 'string' ? item.product : item.product?.name ?? 'CRM') as Product,
+                category: (item.category.charAt(0).toUpperCase() + item.category.slice(1)) as ChangelogCategory,
+                title: item.title,
+                description: item.description,
+            });
+        }
+    }
+    return flat;
+}
+
+const entries = computed<ChangelogEntry[]>(() => {
+    const normalized = normalizeEntries(props.entries);
+    return normalized.length ? normalized : [
     { date: '2026-03-20', product: 'CRM', category: 'New', title: 'Pipeline automation rules', description: 'Create custom automation rules to move deals between pipeline stages based on triggers like email replies, meeting completions, or form submissions.' },
     { date: '2026-03-18', product: 'Analytics', category: 'Improved', title: 'Dashboard loading performance', description: 'Reduced average dashboard load time by 40% through query optimization and intelligent caching of frequently accessed reports.' },
     { date: '2026-03-12', product: 'Helpdesk', category: 'Fixed', title: 'Ticket assignment notification delay', description: 'Fixed an issue where agents were not receiving real-time notifications when tickets were assigned to them via round-robin routing.' },
@@ -65,7 +92,8 @@ const entries = computed<ChangelogEntry[]>(() => props.entries ?? [
     { date: '2026-01-22', product: 'CRM', category: 'New', title: 'Email sequence builder', description: 'Design multi-step email sequences with conditional branching, A/B testing, and automatic follow-ups based on recipient engagement.' },
     { date: '2026-01-15', product: 'Analytics', category: 'Fixed', title: 'Timezone offset in weekly reports', description: 'Fixed an issue where weekly report boundaries were calculated using UTC instead of the workspace configured timezone.' },
     { date: '2026-01-08', product: 'Helpdesk', category: 'Fixed', title: 'SLA timer pause on pending status', description: 'SLA timers now correctly pause when a ticket is moved to pending status awaiting customer response.' },
-]);
+    ];
+});
 
 const filteredEntries = computed(() => {
     if (activeFilter.value === 'all') return entries.value;
