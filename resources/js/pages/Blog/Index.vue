@@ -7,24 +7,49 @@ import { FileText, ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { ref, computed } from 'vue';
 import { useLocale } from '@/composables/useLocale';
 
+type BlogPost = {
+    title: string; excerpt: string; author: { name: string; photo: string };
+    publishedAt: string; category: string; readingTime: string;
+    slug: string; featuredImage: string;
+};
+
 const props = defineProps<{
-    posts?: Array<{
-        title: string; excerpt: string; author: { name: string; photo: string };
-        publishedAt: string; category: string; readingTime: string;
-        slug: string; featuredImage: string;
-    }>;
-    categories?: string[];
+    posts?: { data: BlogPost[]; current_page: number; last_page: number; per_page: number; total: number } | BlogPost[];
+    categories?: Array<{ name: string; slug: string }> | string[];
     currentCategory?: string;
 }>();
 
 const { t } = useLocale();
 
-const displayCategories = computed(() => props.categories ?? ['All', 'Product Updates', 'Tutorials', 'Company News', 'Industry Insights']);
+// Handle both paginated object and plain array from backend
+const postsArray = computed<BlogPost[]>(() => {
+    if (!props.posts) return fallbackPosts;
+    if (Array.isArray(props.posts)) return props.posts;
+    if (props.posts.data) return props.posts.data;
+    return fallbackPosts;
+});
+
+const serverPage = computed(() => {
+    if (props.posts && !Array.isArray(props.posts)) return props.posts.current_page ?? 1;
+    return 1;
+});
+
+const serverTotalPages = computed(() => {
+    if (props.posts && !Array.isArray(props.posts)) return props.posts.last_page ?? 1;
+    return 0;
+});
+
+const displayCategories = computed(() => {
+    if (!props.categories?.length) return ['All', 'Product Updates', 'Tutorials', 'Company News', 'Industry Insights'];
+    const cats = props.categories.map(c => typeof c === 'string' ? c : c.name);
+    return ['All', ...cats];
+});
+
 const activeCategory = ref(props.currentCategory ?? 'All');
-const currentPage = ref(1);
+const currentPage = ref(serverPage.value);
 const postsPerPage = 6;
 
-const allPosts = computed(() => props.posts ?? [
+const fallbackPosts: BlogPost[] = [
     {
         title: 'Introducing Kaabosh CRM 2.0: A Complete Redesign',
         excerpt: 'We have rebuilt our CRM from the ground up with a focus on speed, simplicity, and powerful automation workflows that save your team hours every week.',
@@ -105,16 +130,17 @@ const allPosts = computed(() => props.posts ?? [
         slug: 'helpdesk-beta-learnings',
         featuredImage: '/images/blog/helpdesk-beta.jpg',
     },
-]);
+];
 
 const filteredPosts = computed(() => {
-    if (activeCategory.value === 'All') return allPosts.value;
-    return allPosts.value.filter(post => post.category === activeCategory.value);
+    if (activeCategory.value === 'All') return postsArray.value;
+    return postsArray.value.filter(post => post.category === activeCategory.value);
 });
 
-const totalPages = computed(() => Math.ceil(filteredPosts.value.length / postsPerPage));
+const totalPages = computed(() => serverTotalPages.value || Math.ceil(filteredPosts.value.length / postsPerPage));
 
 const paginatedPosts = computed(() => {
+    if (serverTotalPages.value > 0) return filteredPosts.value;
     const start = (currentPage.value - 1) * postsPerPage;
     return filteredPosts.value.slice(start, start + postsPerPage);
 });
