@@ -9,6 +9,11 @@ import { Shield, CreditCard, RefreshCw, Check, X as XIcon } from 'lucide-vue-nex
 import { ref, computed } from 'vue';
 import { useLocale } from '@/composables/useLocale';
 
+const props = defineProps<{
+    pricingData?: Record<string, any[]>;
+    comparisonFeatures?: Record<string, Record<string, Record<string, string | boolean>>>;
+}>();
+
 const { t } = useLocale();
 
 const billingCycle = ref<'monthly' | 'annual'>('monthly');
@@ -16,7 +21,7 @@ const billingCycle = ref<'monthly' | 'annual'>('monthly');
 const productTabs = ['CRM', 'Analytics', 'Helpdesk', 'Forms'];
 const activeProduct = ref('CRM');
 
-const pricingData: Record<string, any[]> = {
+const fallbackPricingData: Record<string, any[]> = {
     CRM: [
         { name: 'Free', monthlyPrice: '$0', annualPrice: '$0', interval: '/month', description: 'For individuals getting started.', features: ['Up to 250 contacts', '1 pipeline', 'Basic reporting', 'Email support'], isPopular: false, isEnterprise: false, ctaLabel: t('common.startFree'), ctaUrl: '#' },
         { name: 'Pro', monthlyPrice: '$29', annualPrice: '$23', interval: '/user/month', description: 'For growing sales teams.', features: ['Unlimited contacts', 'Unlimited pipelines', 'Workflow automation', 'Email integration', 'Advanced reporting', 'Priority support'], isPopular: true, isEnterprise: false, ctaLabel: t('common.startFreeTrial'), ctaUrl: '#', savingsPercent: 20 },
@@ -39,8 +44,10 @@ const pricingData: Record<string, any[]> = {
     ],
 };
 
+const pricingData = computed(() => props.pricingData ?? fallbackPricingData);
+
 const currentPlans = computed(() => {
-    const plans = pricingData[activeProduct.value] || [];
+    const plans = pricingData.value[activeProduct.value] || [];
     return plans.map(plan => ({
         ...plan,
         price: billingCycle.value === 'annual' ? plan.annualPrice : plan.monthlyPrice,
@@ -56,7 +63,7 @@ const faqItems = computed(() => [
     { question: t('pricing.faq.limits.q'), answer: t('pricing.faq.limits.a') },
 ]);
 
-const comparisonFeatures: Record<string, Record<string, Record<string, string | boolean>>> = {
+const comparisonFeatures = computed<Record<string, Record<string, Record<string, string | boolean>>>>(() => props.comparisonFeatures ?? {
     CRM: {
         'Core Features': {
             Contacts: { Free: 'Up to 250', Pro: 'Unlimited', Business: 'Unlimited', Enterprise: 'Unlimited' },
@@ -71,7 +78,7 @@ const comparisonFeatures: Record<string, Record<string, Record<string, string | 
             'Audit Logs': { Free: false, Pro: false, Business: false, Enterprise: true },
         },
     },
-};
+});
 
 const expandedGroups = ref<Record<string, boolean>>({});
 
@@ -151,7 +158,7 @@ function toggleGroup(group: string) {
         </section>
 
         <!-- Feature Comparison Table -->
-        <section v-if="comparisonFeatures[activeProduct]" class="py-16 lg:py-24 bg-muted/30">
+        <section v-if="comparisonFeatures?.[activeProduct]" class="py-16 lg:py-24 bg-muted/30">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <h2 class="text-2xl font-bold text-center mb-8">{{ t('pricing.featureComparison') }}</h2>
                 <div class="overflow-x-auto">

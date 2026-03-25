@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import LegalLayout from '@/layouts/website/LegalLayout.vue';
 import { Head } from '@inertiajs/vue3';
+
+const props = defineProps<{
+    title?: string;
+    lastUpdated?: string;
+    body?: string;
+}>();
 </script>
 
 <template>
@@ -8,7 +14,9 @@ import { Head } from '@inertiajs/vue3';
         <meta name="description" content="Kaabosh Terms of Service — The terms governing your use of our website and products." />
     </Head>
 
-    <LegalLayout title="Terms of Service" last-updated="March 1, 2025">
+    <LegalLayout :title="props.title ?? 'Terms of Service'" :last-updated="props.lastUpdated ?? 'March 1, 2025'">
+        <div v-if="props.body" v-html="props.body" />
+        <template v-else>
         <h2 id="acceptance">1. Acceptance of Terms</h2>
         <p>
             By accessing or using the Kaabosh website and services, you agree to be bound by these Terms of Service.
@@ -71,5 +79,6 @@ import { Head } from '@inertiajs/vue3';
             <strong>Email:</strong> legal@kaabosh.com<br />
             <strong>Address:</strong> Dubai, United Arab Emirates
         </p>
+        </template>
     </LegalLayout>
 </template>

@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import LegalLayout from '@/layouts/website/LegalLayout.vue';
 import { Head } from '@inertiajs/vue3';
+
+const props = defineProps<{
+    title?: string;
+    lastUpdated?: string;
+    body?: string;
+}>();
 </script>
 
 <template>
@@ -8,7 +14,9 @@ import { Head } from '@inertiajs/vue3';
         <meta name="description" content="Kaabosh Privacy Policy — Learn how we collect, use, and protect your personal data." />
     </Head>
 
-    <LegalLayout title="Privacy Policy" last-updated="March 1, 2025">
+    <LegalLayout :title="props.title ?? 'Privacy Policy'" :last-updated="props.lastUpdated ?? 'March 1, 2025'">
+        <div v-if="props.body" v-html="props.body" />
+        <template v-else>
         <h2 id="introduction">1. Introduction</h2>
         <p>
             Welcome to Kaabosh ("Company," "we," "our," or "us"). This Privacy Policy explains how we collect, use,
@@ -98,5 +106,6 @@ import { Head } from '@inertiajs/vue3';
             <strong>Email:</strong> privacy@kaabosh.com<br />
             <strong>Address:</strong> Dubai, United Arab Emirates
         </p>
+        </template>
     </LegalLayout>
 </template>

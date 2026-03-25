@@ -8,9 +8,16 @@ import { Search, X, ArrowRight } from 'lucide-vue-next';
 import { useLocale } from '@/composables/useLocale';
 import { computed, ref } from 'vue';
 
+const props = defineProps<{
+    integrations?: Array<{
+        slug: string; name: string; logo: string;
+        description: string; category: string;
+    }>;
+}>();
+
 const { t } = useLocale();
 
-const integrations = [
+const allIntegrations = computed(() => props.integrations ?? [
     {
         slug: 'slack',
         name: 'Slack',
@@ -67,14 +74,14 @@ const integrations = [
         description: 'Turn customer feedback into Jira tickets automatically. Track issue status from within Kaabosh and keep customers updated.',
         category: 'Developer Tools',
     },
-];
+]);
 
-const categories = computed(() => ['All', ...new Set(integrations.map(i => i.category))]);
+const categories = computed(() => ['All', ...new Set(allIntegrations.value.map(i => i.category))]);
 const selectedCategory = ref('All');
 const searchQuery = ref('');
 
 const filteredIntegrations = computed(() => {
-    return integrations.filter(i => {
+    return allIntegrations.value.filter(i => {
         const matchCategory = selectedCategory.value === 'All' || i.category === selectedCategory.value;
         const matchSearch = !searchQuery.value || i.name.toLowerCase().includes(searchQuery.value.toLowerCase()) || i.description.toLowerCase().includes(searchQuery.value.toLowerCase());
         return matchCategory && matchSearch;

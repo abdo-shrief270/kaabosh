@@ -11,79 +11,79 @@ import { Head, Link } from '@inertiajs/vue3';
 import { ArrowRight, Shield, Download, Globe, Server, Zap, BarChart3, Users, Mail, CheckCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 
-const props = defineProps<{ slug: string }>();
+const props = defineProps<{
+    slug: string;
+    product?: Record<string, any>;
+    trustLogos?: Array<{ src: string; alt: string }>;
+}>();
 
-// Mock product data - would come from API in production
-const productData: Record<string, any> = {
-    crm: {
-        name: 'Kaabosh CRM',
-        slug: 'crm',
-        accentColor: '#3b82f6',
-        status: 'live',
-        headline: 'Close more deals with less effort',
-        subheadline: 'A modern CRM that helps your sales team build relationships, track pipelines, and automate the busywork.',
-        heroImage: '/images/products/crm-hero.png',
-        demoVideoUrl: null,
-        problems: [
-            { icon: 'Users', title: 'Lost leads', description: 'Leads fall through the cracks when your tools are scattered.' },
-            { icon: 'BarChart3', title: 'No visibility', description: 'Without pipeline visibility, forecasting is just guessing.' },
-            { icon: 'Mail', title: 'Manual follow-ups', description: 'Your team spends hours on repetitive emails instead of selling.' },
-        ],
-        features: [
-            { icon: 'Users', name: 'Contact Management', description: 'Keep every interaction in one place. Notes, emails, calls, and deals — all tied to each contact.', image: '/images/products/crm-feature-1.png' },
-            { icon: 'BarChart3', name: 'Visual Pipelines', description: 'Drag-and-drop deal stages. See your entire pipeline at a glance and know exactly where every deal stands.', image: '/images/products/crm-feature-2.png' },
-            { icon: 'Zap', name: 'Workflow Automation', description: 'Automate follow-ups, task assignments, and notifications. Your CRM works while you sleep.', image: '/images/products/crm-feature-3.png' },
-        ],
-        modules: [
-            { icon: 'Users', name: 'Contacts', description: 'Unified contact database' },
-            { icon: 'BarChart3', name: 'Pipelines', description: 'Visual deal tracking' },
-            { icon: 'Zap', name: 'Automation', description: 'Workflow engine' },
-            { icon: 'Mail', name: 'Email', description: 'Built-in email sync' },
-            { icon: 'CheckCircle', name: 'Tasks', description: 'Team task management' },
-            { icon: 'Globe', name: 'Reporting', description: 'Custom dashboards' },
-        ],
-        howItWorks: [
-            { title: 'Import your contacts', description: 'Upload a CSV or connect your email. We auto-deduplicate and enrich your data.' },
-            { title: 'Set up your pipeline', description: 'Customize deal stages to match your sales process. Drag and drop to organize.' },
-            { title: 'Start closing deals', description: 'Track every interaction, automate follow-ups, and watch your revenue grow.' },
-        ],
-        screenshots: [
-            { src: '/images/products/crm-screen-1.png', alt: 'CRM Dashboard' },
-            { src: '/images/products/crm-screen-2.png', alt: 'Pipeline View' },
-            { src: '/images/products/crm-screen-3.png', alt: 'Contact Detail' },
-        ],
-        pricing: [
-            { name: 'Free', price: '$0', interval: '/month', description: 'For individuals getting started.', features: ['Up to 250 contacts', '1 pipeline', 'Basic reporting'], isPopular: false, isEnterprise: false, ctaLabel: 'Start Free', ctaUrl: '/pricing?product=crm' },
-            { name: 'Pro', price: '$29', interval: '/user/month', description: 'For growing sales teams.', features: ['Unlimited contacts', 'Unlimited pipelines', 'Automation', 'Email integration', 'Advanced reporting'], isPopular: true, isEnterprise: false, ctaLabel: 'Start Free Trial', ctaUrl: '/pricing?product=crm' },
-            { name: 'Enterprise', price: 'Custom', interval: '', description: 'For large organizations.', features: ['Everything in Pro', 'SSO & SCIM', 'Audit logs', 'Dedicated support', 'Custom SLA'], isPopular: false, isEnterprise: true, ctaLabel: 'Contact Sales', ctaUrl: '/contact?inquiry=enterprise&product=crm' },
-        ],
-        testimonials: [
-            { quote: 'Kaabosh CRM transformed how we manage our pipeline. 40% more deals closed in Q1.', customerName: 'Sarah Chen', jobTitle: 'VP of Sales', company: 'TechFlow Inc.', photoUrl: '/images/testimonials/sarah.jpg', productUsed: 'CRM' },
-            { quote: 'Finally a CRM that our team actually enjoys using. Adoption was nearly instant.', customerName: 'James Wright', jobTitle: 'Sales Director', company: 'ScaleUp Co.', photoUrl: '/images/testimonials/james.jpg', productUsed: 'CRM' },
-        ],
-        securityBadges: ['GDPR Compliant', 'SSO Available', 'Data Export', 'EU Hosting'],
-        faq: [
-            { question: 'Can I import my existing contacts?', answer: 'Yes! You can import contacts via CSV upload, or connect directly to your existing CRM, email, or spreadsheet. We handle deduplication automatically.' },
-            { question: 'Is there a free trial?', answer: 'Yes, the Pro plan includes a 14-day free trial with full access to all features. No credit card required.' },
-            { question: 'How does pricing work for teams?', answer: 'Pro and Enterprise plans are priced per user per month. Annual billing saves you 20%. Volume discounts available for teams of 50+.' },
-            { question: 'Can I customize the pipeline stages?', answer: 'Absolutely. You can create unlimited custom pipelines with any stages that match your sales process.' },
-            { question: 'What integrations are available?', answer: 'We integrate with 100+ tools including Slack, Gmail, Outlook, Zapier, and more. Our API also allows custom integrations.' },
-            { question: 'Is my data secure?', answer: 'Yes. We are SOC 2 compliant, encrypt all data at rest and in transit, and offer EU hosting for GDPR compliance.' },
-        ],
-    },
+const fallbackProduct: Record<string, any> = {
+    name: 'Kaabosh CRM',
+    slug: 'crm',
+    accentColor: '#3b82f6',
+    status: 'live',
+    headline: 'Close more deals with less effort',
+    subheadline: 'A modern CRM that helps your sales team build relationships, track pipelines, and automate the busywork.',
+    heroImage: '/images/products/crm-hero.png',
+    demoVideoUrl: null,
+    problems: [
+        { icon: 'Users', title: 'Lost leads', description: 'Leads fall through the cracks when your tools are scattered.' },
+        { icon: 'BarChart3', title: 'No visibility', description: 'Without pipeline visibility, forecasting is just guessing.' },
+        { icon: 'Mail', title: 'Manual follow-ups', description: 'Your team spends hours on repetitive emails instead of selling.' },
+    ],
+    features: [
+        { icon: 'Users', name: 'Contact Management', description: 'Keep every interaction in one place. Notes, emails, calls, and deals — all tied to each contact.', image: '/images/products/crm-feature-1.png' },
+        { icon: 'BarChart3', name: 'Visual Pipelines', description: 'Drag-and-drop deal stages. See your entire pipeline at a glance and know exactly where every deal stands.', image: '/images/products/crm-feature-2.png' },
+        { icon: 'Zap', name: 'Workflow Automation', description: 'Automate follow-ups, task assignments, and notifications. Your CRM works while you sleep.', image: '/images/products/crm-feature-3.png' },
+    ],
+    modules: [
+        { icon: 'Users', name: 'Contacts', description: 'Unified contact database' },
+        { icon: 'BarChart3', name: 'Pipelines', description: 'Visual deal tracking' },
+        { icon: 'Zap', name: 'Automation', description: 'Workflow engine' },
+        { icon: 'Mail', name: 'Email', description: 'Built-in email sync' },
+        { icon: 'CheckCircle', name: 'Tasks', description: 'Team task management' },
+        { icon: 'Globe', name: 'Reporting', description: 'Custom dashboards' },
+    ],
+    howItWorks: [
+        { title: 'Import your contacts', description: 'Upload a CSV or connect your email. We auto-deduplicate and enrich your data.' },
+        { title: 'Set up your pipeline', description: 'Customize deal stages to match your sales process. Drag and drop to organize.' },
+        { title: 'Start closing deals', description: 'Track every interaction, automate follow-ups, and watch your revenue grow.' },
+    ],
+    screenshots: [
+        { src: '/images/products/crm-screen-1.png', alt: 'CRM Dashboard' },
+        { src: '/images/products/crm-screen-2.png', alt: 'Pipeline View' },
+        { src: '/images/products/crm-screen-3.png', alt: 'Contact Detail' },
+    ],
+    pricing: [
+        { name: 'Free', price: '$0', interval: '/month', description: 'For individuals getting started.', features: ['Up to 250 contacts', '1 pipeline', 'Basic reporting'], isPopular: false, isEnterprise: false, ctaLabel: 'Start Free', ctaUrl: '/pricing?product=crm' },
+        { name: 'Pro', price: '$29', interval: '/user/month', description: 'For growing sales teams.', features: ['Unlimited contacts', 'Unlimited pipelines', 'Automation', 'Email integration', 'Advanced reporting'], isPopular: true, isEnterprise: false, ctaLabel: 'Start Free Trial', ctaUrl: '/pricing?product=crm' },
+        { name: 'Enterprise', price: 'Custom', interval: '', description: 'For large organizations.', features: ['Everything in Pro', 'SSO & SCIM', 'Audit logs', 'Dedicated support', 'Custom SLA'], isPopular: false, isEnterprise: true, ctaLabel: 'Contact Sales', ctaUrl: '/contact?inquiry=enterprise&product=crm' },
+    ],
+    testimonials: [
+        { quote: 'Kaabosh CRM transformed how we manage our pipeline. 40% more deals closed in Q1.', customerName: 'Sarah Chen', jobTitle: 'VP of Sales', company: 'TechFlow Inc.', photoUrl: '/images/testimonials/sarah.jpg', productUsed: 'CRM' },
+        { quote: 'Finally a CRM that our team actually enjoys using. Adoption was nearly instant.', customerName: 'James Wright', jobTitle: 'Sales Director', company: 'ScaleUp Co.', photoUrl: '/images/testimonials/james.jpg', productUsed: 'CRM' },
+    ],
+    securityBadges: ['GDPR Compliant', 'SSO Available', 'Data Export', 'EU Hosting'],
+    faq: [
+        { question: 'Can I import my existing contacts?', answer: 'Yes! You can import contacts via CSV upload, or connect directly to your existing CRM, email, or spreadsheet. We handle deduplication automatically.' },
+        { question: 'Is there a free trial?', answer: 'Yes, the Pro plan includes a 14-day free trial with full access to all features. No credit card required.' },
+        { question: 'How does pricing work for teams?', answer: 'Pro and Enterprise plans are priced per user per month. Annual billing saves you 20%. Volume discounts available for teams of 50+.' },
+        { question: 'Can I customize the pipeline stages?', answer: 'Absolutely. You can create unlimited custom pipelines with any stages that match your sales process.' },
+        { question: 'What integrations are available?', answer: 'We integrate with 100+ tools including Slack, Gmail, Outlook, Zapier, and more. Our API also allows custom integrations.' },
+        { question: 'Is my data secure?', answer: 'Yes. We are SOC 2 compliant, encrypt all data at rest and in transit, and offer EU hosting for GDPR compliance.' },
+    ],
 };
 
-// Fallback for unknown slugs
-const product = computed(() => productData[props.slug] || productData.crm);
+const product = computed(() => props.product ?? fallbackProduct);
 
-const trustLogos = [
+const displayTrustLogos = computed(() => props.trustLogos ?? [
     { src: '/images/logos/company-1.svg', alt: 'Company 1' },
     { src: '/images/logos/company-2.svg', alt: 'Company 2' },
     { src: '/images/logos/company-3.svg', alt: 'Company 3' },
     { src: '/images/logos/company-4.svg', alt: 'Company 4' },
     { src: '/images/logos/company-5.svg', alt: 'Company 5' },
     { src: '/images/logos/company-6.svg', alt: 'Company 6' },
-];
+]);
 </script>
 
 <template>
@@ -130,7 +130,7 @@ const trustLogos = [
         </section>
 
         <!-- Social Proof Bar -->
-        <TrustBar :logos="trustLogos" />
+        <TrustBar :logos="displayTrustLogos" />
 
         <!-- Problem Statement -->
         <section class="py-20 lg:py-28 bg-muted/30">

@@ -8,9 +8,17 @@ import { Search, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useLocale } from '@/composables/useLocale';
 
+const props = defineProps<{
+    products?: Array<{
+        logo: string; name: string; slug: string; tagline: string;
+        audienceTags: string[]; modules: string[]; status: 'live' | 'beta' | 'coming-soon';
+        description: string; category: string;
+    }>;
+}>();
+
 const { t } = useLocale();
 
-const products = computed(() => [
+const products = computed(() => props.products ?? [
     {
         logo: '/images/products/crm-logo.svg',
         name: t('products.crm.name'),

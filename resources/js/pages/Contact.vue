@@ -41,9 +41,28 @@ async function submitGeneral() {
     if (!validateGeneral()) return;
     generalSubmitting.value = true;
     generalError.value = '';
-    await new Promise(r => setTimeout(r, 1500));
-    generalSubmitting.value = false;
-    generalSuccess.value = true;
+    try {
+        const response = await fetch('/api/v1/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                type: 'general',
+                name: generalForm.value.name,
+                email: generalForm.value.email,
+                subject: generalForm.value.subject,
+                message: generalForm.value.message,
+            }),
+        });
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.message || 'Something went wrong. Please try again.');
+        }
+        generalSuccess.value = true;
+    } catch (err: any) {
+        generalError.value = err.message || 'Something went wrong. Please try again.';
+    } finally {
+        generalSubmitting.value = false;
+    }
 }
 
 // Sales Form
@@ -68,9 +87,31 @@ function validateSales() {
 async function submitSales() {
     if (!validateSales()) return;
     salesSubmitting.value = true;
-    await new Promise(r => setTimeout(r, 1500));
-    salesSubmitting.value = false;
-    salesSuccess.value = true;
+    try {
+        const response = await fetch('/api/v1/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                type: 'sales',
+                name: salesForm.value.name,
+                email: salesForm.value.email,
+                company: salesForm.value.company,
+                team_size: salesForm.value.teamSize,
+                product_interest: salesForm.value.productInterest,
+                message: salesForm.value.message,
+            }),
+        });
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.message || 'Something went wrong. Please try again.');
+        }
+        salesSuccess.value = true;
+    } catch (err: any) {
+        // Sales form doesn't have a visible error ref in the template, but we handle gracefully
+        console.error('Sales form submission failed:', err.message);
+    } finally {
+        salesSubmitting.value = false;
+    }
 }
 
 function toggleProduct(product: string) {

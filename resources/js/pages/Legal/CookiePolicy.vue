@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import LegalLayout from '@/layouts/website/LegalLayout.vue';
 import { Head } from '@inertiajs/vue3';
+
+const props = defineProps<{
+    title?: string;
+    lastUpdated?: string;
+    body?: string;
+}>();
 </script>
 
 <template>
@@ -11,7 +17,9 @@ import { Head } from '@inertiajs/vue3';
         />
     </Head>
 
-    <LegalLayout title="Cookie Policy" last-updated="March 1, 2025">
+    <LegalLayout :title="props.title ?? 'Cookie Policy'" :last-updated="props.lastUpdated ?? 'March 1, 2025'">
+        <div v-if="props.body" v-html="props.body" />
+        <template v-else>
         <h2 id="what-are-cookies">1. What Are Cookies</h2>
         <p>
             Cookies are small text files that are stored on your device when you
@@ -68,5 +76,6 @@ import { Head } from '@inertiajs/vue3';
             <strong>Email:</strong> privacy@kaabosh.com<br />
             <strong>Address:</strong> Dubai, United Arab Emirates
         </p>
+        </template>
     </LegalLayout>
 </template>

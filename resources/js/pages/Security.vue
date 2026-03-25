@@ -4,10 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Head, Link } from '@inertiajs/vue3';
 import { Shield, Lock, Server, Eye, CheckCircle, FileCheck, Mail, ExternalLink } from 'lucide-vue-next';
 import { useLocale } from '@/composables/useLocale';
+import { computed } from 'vue';
+
+const props = defineProps<{
+    content?: {
+        certifications?: Array<{ icon: string; name: string; description: string }>;
+        dataHandlingPractices?: string[];
+        securityFeatures?: Array<{ feature: string; crm: boolean; analytics: boolean; helpdesk: boolean }>;
+    };
+}>();
 
 const { t } = useLocale();
 
-const certifications = [
+const certifications = computed(() => props.content?.certifications?.map(c => ({ ...c, icon: c.icon })) ?? [
     {
         icon: FileCheck,
         name: 'GDPR',
@@ -28,9 +37,9 @@ const certifications = [
         name: 'CCPA',
         description: 'Compliant with the California Consumer Privacy Act. We honor all consumer rights requests including data access, deletion, and opt-out of data sales.',
     },
-];
+]);
 
-const dataHandlingPractices = [
+const dataHandlingPractices = computed(() => props.content?.dataHandlingPractices ?? [
     'All data is encrypted at rest using AES-256 and in transit using TLS 1.3.',
     'Customer data is stored in geographically isolated regions with configurable data residency.',
     'Daily encrypted backups with point-in-time recovery for up to 30 days.',
@@ -39,9 +48,9 @@ const dataHandlingPractices = [
     'Automated security scanning integrated into our CI/CD pipeline.',
     'Comprehensive audit logging with tamper-evident storage for all system actions.',
     'Data retention policies with automatic purging when subscriptions are terminated.',
-];
+]);
 
-const securityFeatures = [
+const securityFeatures = computed(() => props.content?.securityFeatures ?? [
     { feature: 'SSO / SAML 2.0', crm: true, analytics: true, helpdesk: true },
     { feature: 'Two-factor authentication', crm: true, analytics: true, helpdesk: true },
     { feature: 'Role-based access control', crm: true, analytics: true, helpdesk: true },
@@ -52,7 +61,7 @@ const securityFeatures = [
     { feature: 'Field-level encryption', crm: true, analytics: false, helpdesk: false },
     { feature: 'Session management', crm: true, analytics: true, helpdesk: true },
     { feature: 'Webhook signing', crm: true, analytics: true, helpdesk: true },
-];
+]);
 </script>
 
 <template>

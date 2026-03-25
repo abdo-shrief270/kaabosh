@@ -12,12 +12,15 @@ import {
 import { ref, computed } from 'vue';
 import { useLocale } from '@/composables/useLocale';
 
-const props = defineProps<{ slug: string }>();
+const props = defineProps<{
+    slug: string;
+    role?: Record<string, any>;
+    relatedRoles?: Array<{ slug: string; title: string; department: string; location: string; workType: string }>;
+}>();
 
 const { t } = useLocale();
 
-// Sample role data
-const rolesData: Record<string, any> = {
+const fallbackRolesData: Record<string, any> = {
     'senior-frontend-engineer': {
         title: 'Senior Frontend Engineer',
         department: 'Engineering',
@@ -94,8 +97,7 @@ const rolesData: Record<string, any> = {
     },
 };
 
-// Fallback to first role if slug not found
-const role = computed(() => rolesData[props.slug] || rolesData['senior-frontend-engineer']);
+const role = computed(() => props.role ?? fallbackRolesData[props.slug] ?? fallbackRolesData['senior-frontend-engineer']);
 
 const hiringSteps = [
     { title: 'Application Review', description: 'We review every application within 5 business days.' },
@@ -104,7 +106,7 @@ const hiringSteps = [
     { title: 'Offer & Onboarding', description: 'Expect an offer within a week of your final interview.' },
 ];
 
-const relatedRoles = computed(() => [
+const displayRelatedRoles = computed(() => props.relatedRoles ?? [
     { slug: 'backend-engineer', title: 'Backend Engineer', department: 'Engineering', location: 'Remote (US/EU)', workType: 'Full-time' },
     { slug: 'product-designer', title: 'Product Designer', department: 'Design', location: 'Remote (Global)', workType: 'Full-time' },
     { slug: 'devops-engineer', title: 'DevOps Engineer', department: 'Engineering', location: 'Remote (EU)', workType: 'Full-time' },
@@ -122,6 +124,9 @@ const form = ref({
     coverLetter: '',
     referralSource: '',
     referralName: '',
+    diversityGender: '',
+    diversityEthnicity: '',
+    diversityDisability: '',
 });
 
 const errors = ref<Record<string, string>>({});
@@ -455,6 +460,60 @@ function scrollToApplication() {
                         </div>
                     </div>
 
+                    <!-- Diversity & Inclusion (Optional) -->
+                    <div class="rounded-xl border bg-muted/30 p-6 space-y-5">
+                        <div>
+                            <h3 class="text-base font-semibold">Diversity & Inclusion (Optional)</h3>
+                            <p class="mt-1 text-sm text-muted-foreground">
+                                We are committed to building a diverse and inclusive workplace. The information below is entirely optional and will not affect your application. It is collected anonymously for aggregate reporting to help us measure and improve our hiring practices.
+                            </p>
+                        </div>
+                        <div>
+                            <Label for="app-diversity-gender">Gender Identity</Label>
+                            <select
+                                id="app-diversity-gender"
+                                v-model="form.diversityGender"
+                                class="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            >
+                                <option value="">Prefer not to say</option>
+                                <option value="woman">Woman</option>
+                                <option value="man">Man</option>
+                                <option value="non-binary">Non-binary</option>
+                                <option value="self-describe">Prefer to self-describe</option>
+                            </select>
+                        </div>
+                        <div>
+                            <Label for="app-diversity-ethnicity">Ethnicity</Label>
+                            <select
+                                id="app-diversity-ethnicity"
+                                v-model="form.diversityEthnicity"
+                                class="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            >
+                                <option value="">Prefer not to say</option>
+                                <option value="asian">Asian</option>
+                                <option value="black">Black or African American</option>
+                                <option value="hispanic">Hispanic or Latino</option>
+                                <option value="indigenous">Indigenous or Native</option>
+                                <option value="middle-eastern">Middle Eastern or North African</option>
+                                <option value="white">White or European</option>
+                                <option value="multiracial">Multiracial / Mixed</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <Label for="app-diversity-disability">Disability Status</Label>
+                            <select
+                                id="app-diversity-disability"
+                                v-model="form.diversityDisability"
+                                class="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            >
+                                <option value="">Prefer not to say</option>
+                                <option value="yes">Yes, I have a disability</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div v-if="submitError" class="flex items-center gap-2 text-sm text-destructive">
                         <AlertCircle class="size-4" />
                         {{ submitError }}
@@ -479,7 +538,7 @@ function scrollToApplication() {
                 </div>
                 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     <Link
-                        v-for="r in relatedRoles"
+                        v-for="r in displayRelatedRoles"
                         :key="r.slug"
                         :href="`/careers/${r.slug}`"
                         class="rounded-xl border bg-card p-6 transition-colors hover:bg-accent/50"

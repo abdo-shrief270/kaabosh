@@ -12,6 +12,17 @@ const { t } = useLocale();
 
 const props = defineProps<{
     slug: string;
+    post?: {
+        title: string; excerpt: string;
+        author: { name: string; photo: string; bio: string; url: string };
+        publishedAt: string; category: string; readingTime: string;
+        slug: string; featuredImage: string; content: string;
+    };
+    relatedPosts?: Array<{
+        title: string; excerpt: string; author: { name: string; photo: string };
+        publishedAt: string; category: string; readingTime: string;
+        slug: string; featuredImage: string;
+    }>;
 }>();
 
 const copied = ref(false);
@@ -31,7 +42,7 @@ onUnmounted(() => {
     window.removeEventListener('scroll', updateScrollProgress);
 });
 
-const post = computed(() => ({
+const post = computed(() => props.post ?? ({
     title: 'Introducing Kaabosh CRM 2.0: A Complete Redesign',
     excerpt: 'We have rebuilt our CRM from the ground up with a focus on speed, simplicity, and powerful automation workflows that save your team hours every week.',
     author: {
@@ -77,7 +88,7 @@ const post = computed(() => ({
     `,
 }));
 
-const relatedPosts = computed(() => [
+const displayRelatedPosts = computed(() => props.relatedPosts ?? [
     {
         title: 'How to Build a Sales Pipeline That Actually Converts',
         excerpt: 'Learn the step-by-step process our top customers use to design pipelines that move deals forward.',
@@ -243,7 +254,7 @@ function copyLink() {
             <h2 class="mb-8 text-2xl font-bold tracking-tight">Related Posts</h2>
             <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 <BlogPostCard
-                    v-for="relatedPost in relatedPosts"
+                    v-for="relatedPost in displayRelatedPosts"
                     :key="relatedPost.slug"
                     :post="relatedPost"
                 />

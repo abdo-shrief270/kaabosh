@@ -33,7 +33,7 @@ function getCookie(name: string): string | null {
 
 function setCookie(name: string, value: string) {
     const maxAge = 365 * 24 * 60 * 60; // 12 months
-    document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`;
+    document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Strict;Secure`;
 }
 
 function saveConsent(analyticsOn: boolean, marketingOn: boolean) {

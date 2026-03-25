@@ -9,9 +9,12 @@ import { computed } from 'vue';
 
 const { t } = useLocale();
 
-const props = defineProps<{ slug: string }>();
+const props = defineProps<{
+    slug: string;
+    integration?: Record<string, any>;
+}>();
 
-const integrationData: Record<string, any> = {
+const fallbackIntegrationData: Record<string, any> = {
     slack: {
         name: 'Slack',
         logo: '/images/integrations/slack.svg',
@@ -118,7 +121,7 @@ const integrationData: Record<string, any> = {
     },
 };
 
-const integration = computed(() => integrationData[props.slug] || integrationData.slack);
+const integration = computed(() => props.integration ?? fallbackIntegrationData[props.slug] ?? fallbackIntegrationData.slack);
 </script>
 
 <template>

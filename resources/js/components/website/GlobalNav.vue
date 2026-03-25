@@ -7,11 +7,13 @@ import LanguageSwitcher from './LanguageSwitcher.vue';
 import SkipToContent from './SkipToContent.vue';
 import { Menu, X, Search, ChevronDown, ArrowRight } from 'lucide-vue-next';
 import { useLocale } from '@/composables/useLocale';
+import SearchModal from './SearchModal.vue';
 
 const { t } = useLocale();
 
 const mobileOpen = ref(false);
 const productsOpen = ref(false);
+const searchModalRef = ref<InstanceType<typeof SearchModal> | null>(null);
 const page = usePage();
 
 const currentUrl = computed(() => page.url);
@@ -48,6 +50,7 @@ function handleEscape(e: KeyboardEvent) {
 
 <template>
     <SkipToContent />
+    <SearchModal ref="searchModalRef" />
     <header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
             <!-- Logo -->
@@ -118,7 +121,7 @@ function handleEscape(e: KeyboardEvent) {
             <div class="hidden md:flex items-center gap-1">
                 <LanguageSwitcher />
                 <DarkModeToggle />
-                <Button variant="ghost" size="icon" title="Search (Ctrl+K)">
+                <Button variant="ghost" size="icon" title="Search (Ctrl+K)" @click="searchModalRef?.open()">
                     <Search class="size-5" />
                 </Button>
                 <Button as-child size="sm" class="ms-2">

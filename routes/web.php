@@ -1,37 +1,51 @@
 <?php
 
+use App\Http\Controllers\Web\AboutController;
+use App\Http\Controllers\Web\BlogController;
+use App\Http\Controllers\Web\CareerController;
+use App\Http\Controllers\Web\ChangelogController;
+use App\Http\Controllers\Web\CompareController;
+use App\Http\Controllers\Web\ContactController;
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\IntegrationController;
+use App\Http\Controllers\Web\LegalController;
+use App\Http\Controllers\Web\PressController;
+use App\Http\Controllers\Web\PricingController;
+use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Web\SecurityController;
+use App\Http\Controllers\Web\SitemapController;
+use App\Http\Controllers\Web\UseCaseController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 // Phase 1 - Launch Pages
-Route::get('/', fn () => Inertia::render('Home'))->name('home');
-Route::get('/products', fn () => Inertia::render('Products/Index'))->name('products.index');
-Route::get('/products/{slug}', fn ($slug) => Inertia::render('Products/Show', ['slug' => $slug]))->name('products.show');
-Route::get('/products/{slug}/docs', fn ($slug) => Inertia::render('Products/Docs', ['slug' => $slug]))->name('products.docs');
-Route::get('/pricing', fn () => Inertia::render('Pricing'))->name('pricing');
-Route::get('/about', fn () => Inertia::render('About'))->name('about');
-Route::get('/contact', fn () => Inertia::render('Contact'))->name('contact');
-Route::get('/privacy-policy', fn () => Inertia::render('Legal/PrivacyPolicy'))->name('legal.privacy');
-Route::get('/terms-of-service', fn () => Inertia::render('Legal/TermsOfService'))->name('legal.terms');
-Route::get('/cookie-policy', fn () => Inertia::render('Legal/CookiePolicy'))->name('legal.cookies');
-Route::get('/sitemap', fn () => Inertia::render('Sitemap'))->name('sitemap');
+Route::get('/', HomeController::class)->name('home');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{product}/docs', [ProductController::class, 'docs'])->name('products.docs');
+Route::get('/pricing', PricingController::class)->name('pricing');
+Route::get('/about', AboutController::class)->name('about');
+Route::get('/contact', ContactController::class)->name('contact');
+Route::get('/privacy-policy', [LegalController::class, 'privacy'])->name('legal.privacy');
+Route::get('/terms-of-service', [LegalController::class, 'terms'])->name('legal.terms');
+Route::get('/cookie-policy', [LegalController::class, 'cookies'])->name('legal.cookies');
+Route::get('/sitemap', SitemapController::class)->name('sitemap');
 
 // Phase 2 - Growth Pages
-Route::get('/blog', fn () => Inertia::render('Blog/Index'))->name('blog.index');
-Route::get('/blog/{slug}', fn ($slug) => Inertia::render('Blog/Show', ['slug' => $slug]))->name('blog.show');
-Route::get('/changelog', fn () => Inertia::render('Changelog'))->name('changelog');
-Route::get('/security', fn () => Inertia::render('Security'))->name('security');
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{blogPost}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/changelog', ChangelogController::class)->name('changelog');
+Route::get('/security', SecurityController::class)->name('security');
 
 // Phase 3 - Scale Pages
-Route::get('/for-developers', fn () => Inertia::render('ForDevelopers'))->name('for-developers');
-Route::get('/for-enterprise', fn () => Inertia::render('ForEnterprise'))->name('for-enterprise');
-Route::get('/for-agencies', fn () => Inertia::render('ForAgencies'))->name('for-agencies');
-Route::get('/integrations', fn () => Inertia::render('Integrations/Index'))->name('integrations.index');
-Route::get('/integrations/{slug}', fn ($slug) => Inertia::render('Integrations/Show', ['slug' => $slug]))->name('integrations.show');
-Route::get('/compare/{slug}', fn ($slug) => Inertia::render('Compare/Show', ['slug' => $slug]))->name('compare.show');
-Route::get('/careers', fn () => Inertia::render('Careers/Index'))->name('careers.index');
-Route::get('/careers/{slug}', fn ($slug) => Inertia::render('Careers/Show', ['slug' => $slug]))->name('careers.show');
-Route::get('/press', fn () => Inertia::render('Press'))->name('press');
+Route::get('/for-developers', [UseCaseController::class, 'developers'])->name('for-developers');
+Route::get('/for-enterprise', [UseCaseController::class, 'enterprise'])->name('for-enterprise');
+Route::get('/for-agencies', [UseCaseController::class, 'agencies'])->name('for-agencies');
+Route::get('/integrations', [IntegrationController::class, 'index'])->name('integrations.index');
+Route::get('/integrations/{integration}', [IntegrationController::class, 'show'])->name('integrations.show');
+Route::get('/compare/{slug}', [CompareController::class, 'show'])->name('compare.show');
+Route::get('/careers', [CareerController::class, 'index'])->name('careers.index');
+Route::get('/careers/{jobRole}', [CareerController::class, 'show'])->name('careers.show');
+Route::get('/press', PressController::class)->name('press');
 
 // Sitemap (generates static file)
 Route::get('/generate-sitemap', function () {

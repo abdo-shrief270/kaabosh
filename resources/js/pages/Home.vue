@@ -12,9 +12,19 @@ import { ArrowRight, Sparkles } from 'lucide-vue-next';
 import { useLocale } from '@/composables/useLocale';
 import { computed } from 'vue';
 
+const props = defineProps<{
+    products?: Array<{
+        logo: string; name: string; slug: string; tagline: string;
+        audienceTags: string[]; modules: string[]; status: 'live' | 'beta' | 'coming-soon';
+        description: string;
+    }>;
+    trustLogos?: Array<{ name: string; image_url: string; alt_text: string }>;
+    testimonials?: Array<{ quote: string; customer_name: string; job_title: string; company: string; photo: string; product_used: string }>;
+}>();
+
 const { t } = useLocale();
 
-const products = computed(() => [
+const displayProducts = computed(() => props.products ?? [
     {
         logo: '/images/products/crm-logo.svg',
         name: t('products.crm.name'),
@@ -57,7 +67,7 @@ const products = computed(() => [
     },
 ]);
 
-const trustLogos = [
+const displayTrustLogos = computed(() => props.trustLogos?.map(l => ({ src: l.image_url, alt: l.alt_text })) ?? [
     { src: '/images/logos/company-1.svg', alt: 'Company 1' },
     { src: '/images/logos/company-2.svg', alt: 'Company 2' },
     { src: '/images/logos/company-3.svg', alt: 'Company 3' },
@@ -66,7 +76,7 @@ const trustLogos = [
     { src: '/images/logos/company-6.svg', alt: 'Company 6' },
     { src: '/images/logos/company-7.svg', alt: 'Company 7' },
     { src: '/images/logos/company-8.svg', alt: 'Company 8' },
-];
+]);
 
 const differentiators = computed(() => [
     { icon: 'Zap', title: t('home.differentiators.fast.title'), body: t('home.differentiators.fast.body') },
@@ -114,7 +124,14 @@ const audienceTabs = computed(() => [
     },
 ]);
 
-const testimonials = computed(() => [
+const displayTestimonials = computed(() => props.testimonials?.map(item => ({
+    quote: item.quote,
+    customerName: item.customer_name,
+    jobTitle: item.job_title,
+    company: item.company,
+    photoUrl: item.photo,
+    productUsed: item.product_used,
+})) ?? [
     {
         quote: t('testimonials.sarah.quote'),
         customerName: t('testimonials.sarah.name'),
@@ -192,7 +209,7 @@ const stats = computed(() => [
         </section>
 
         <!-- Trust Bar -->
-        <TrustBar :logos="trustLogos" />
+        <TrustBar :logos="displayTrustLogos" />
 
         <!-- Product Grid -->
         <section class="py-20 lg:py-28">
@@ -203,7 +220,7 @@ const stats = computed(() => [
                 </div>
                 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     <ProductCard
-                        v-for="product in products"
+                        v-for="product in displayProducts"
                         :key="product.slug"
                         :product="product"
                         variant="large"
@@ -247,7 +264,7 @@ const stats = computed(() => [
         </section>
 
         <!-- Testimonials -->
-        <TestimonialsSection :testimonials="testimonials" :title="t('home.testimonialsTitle')" />
+        <TestimonialsSection :testimonials="displayTestimonials" :title="t('home.testimonialsTitle')" />
 
         <!-- Stats Strip -->
         <StatsStrip :stats="stats" />

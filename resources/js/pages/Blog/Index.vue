@@ -7,14 +7,24 @@ import { FileText, ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { ref, computed } from 'vue';
 import { useLocale } from '@/composables/useLocale';
 
+const props = defineProps<{
+    posts?: Array<{
+        title: string; excerpt: string; author: { name: string; photo: string };
+        publishedAt: string; category: string; readingTime: string;
+        slug: string; featuredImage: string;
+    }>;
+    categories?: string[];
+    currentCategory?: string;
+}>();
+
 const { t } = useLocale();
 
-const categories = ['All', 'Product Updates', 'Tutorials', 'Company News', 'Industry Insights'];
-const activeCategory = ref('All');
+const displayCategories = computed(() => props.categories ?? ['All', 'Product Updates', 'Tutorials', 'Company News', 'Industry Insights']);
+const activeCategory = ref(props.currentCategory ?? 'All');
 const currentPage = ref(1);
 const postsPerPage = 6;
 
-const posts = [
+const allPosts = computed(() => props.posts ?? [
     {
         title: 'Introducing Kaabosh CRM 2.0: A Complete Redesign',
         excerpt: 'We have rebuilt our CRM from the ground up with a focus on speed, simplicity, and powerful automation workflows that save your team hours every week.',
@@ -95,11 +105,11 @@ const posts = [
         slug: 'helpdesk-beta-learnings',
         featuredImage: '/images/blog/helpdesk-beta.jpg',
     },
-];
+]);
 
 const filteredPosts = computed(() => {
-    if (activeCategory.value === 'All') return posts;
-    return posts.filter(post => post.category === activeCategory.value);
+    if (activeCategory.value === 'All') return allPosts.value;
+    return allPosts.value.filter(post => post.category === activeCategory.value);
 });
 
 const totalPages = computed(() => Math.ceil(filteredPosts.value.length / postsPerPage));
@@ -155,7 +165,7 @@ function goToPage(page: number) {
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex gap-1 overflow-x-auto py-2">
                     <button
-                        v-for="category in categories"
+                        v-for="category in displayCategories"
                         :key="category"
                         class="whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-colors"
                         :class="activeCategory === category

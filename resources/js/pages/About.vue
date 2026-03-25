@@ -6,9 +6,15 @@ import { Linkedin, Heart, Target, Users, Lightbulb, Rocket } from 'lucide-vue-ne
 import { useLocale } from '@/composables/useLocale';
 import { computed } from 'vue';
 
+const props = defineProps<{
+    team?: Array<{ photo: string; name: string; title: string; bio: string; linkedinUrl: string }>;
+    values?: Array<{ icon: string; title: string; body: string }>;
+    milestones?: Array<{ date: string; title: string; description: string }>;
+}>();
+
 const { t } = useLocale();
 
-const team = computed(() => [
+const displayTeam = computed(() => props.team ?? [
     { photo: '/images/team/member-1.jpg', name: t('about.team.ahmed.name'), title: t('about.team.ahmed.title'), bio: t('about.team.ahmed.bio'), linkedinUrl: '#' },
     { photo: '/images/team/member-2.jpg', name: t('about.team.sarah.name'), title: t('about.team.sarah.title'), bio: t('about.team.sarah.bio'), linkedinUrl: '#' },
     { photo: '/images/team/member-3.jpg', name: t('about.team.carlos.name'), title: t('about.team.carlos.title'), bio: t('about.team.carlos.bio'), linkedinUrl: '#' },
@@ -19,7 +25,7 @@ const team = computed(() => [
     { photo: '/images/team/member-8.jpg', name: t('about.team.lisa.name'), title: t('about.team.lisa.title'), bio: t('about.team.lisa.bio'), linkedinUrl: '#' },
 ]);
 
-const values = computed(() => [
+const displayValues = computed(() => props.values?.map(v => ({ ...v, icon: v.icon })) ?? [
     { icon: Target, title: t('about.values.customerFirst.title'), body: t('about.values.customerFirst.body') },
     { icon: Lightbulb, title: t('about.values.simplicity.title'), body: t('about.values.simplicity.body') },
     { icon: Rocket, title: t('about.values.shipIterate.title'), body: t('about.values.shipIterate.body') },
@@ -27,7 +33,7 @@ const values = computed(() => [
     { icon: Heart, title: t('about.values.honest.title'), body: t('about.values.honest.body') },
 ]);
 
-const milestones = computed(() => [
+const displayMilestones = computed(() => props.milestones ?? [
     { date: '2022', title: t('about.milestones.founded.title'), description: t('about.milestones.founded.description') },
     { date: '2023 Q1', title: t('about.milestones.firstLaunch.title'), description: t('about.milestones.firstLaunch.description') },
     { date: '2023 Q3', title: t('about.milestones.thousandTeams.title'), description: t('about.milestones.thousandTeams.description') },
@@ -83,7 +89,7 @@ const milestones = computed(() => [
                     <p class="mt-4 text-lg text-muted-foreground">{{ t('about.teamDescription') }}</p>
                 </div>
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                    <div v-for="member in team" :key="member.name" class="rounded-xl border bg-card p-6 text-center">
+                    <div v-for="member in displayTeam" :key="member.name" class="rounded-xl border bg-card p-6 text-center">
                         <div class="mx-auto mb-4 size-24 overflow-hidden rounded-full bg-muted">
                             <img :src="member.photo" :alt="member.name" class="size-full object-cover" loading="lazy" />
                         </div>
@@ -105,7 +111,7 @@ const milestones = computed(() => [
                     <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">{{ t('about.valuesTitle') }}</h2>
                 </div>
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                    <div v-for="value in values" :key="value.title" class="rounded-xl border bg-card p-6">
+                    <div v-for="value in displayValues" :key="value.title" class="rounded-xl border bg-card p-6">
                         <div class="mb-4 flex size-10 items-center justify-center rounded-lg bg-primary/10">
                             <component :is="value.icon" class="size-5 text-primary" />
                         </div>
@@ -128,7 +134,7 @@ const milestones = computed(() => [
                     <div class="absolute top-0 bottom-0 w-px bg-border ltr:left-4 rtl:right-4 lg:left-1/2 lg:right-auto" />
                     <div class="space-y-12">
                         <div
-                            v-for="(milestone, index) in milestones"
+                            v-for="(milestone, index) in displayMilestones"
                             :key="milestone.date"
                             class="relative ltr:pl-12 rtl:pr-12 lg:pl-0 lg:pr-0"
                             :class="index % 2 === 0 ? 'lg:pr-[calc(50%+2rem)] lg:text-right' : 'lg:pl-[calc(50%+2rem)]'"

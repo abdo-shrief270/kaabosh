@@ -13,6 +13,13 @@ import { ref, computed } from 'vue';
 import { useLocale } from '@/composables/useLocale';
 import { Label } from '@/components/ui/label';
 
+const props = defineProps<{
+    roles?: Array<{
+        slug: string; title: string; department: string;
+        location: string; workType: string; description: string;
+    }>;
+}>();
+
 const { t } = useLocale();
 
 const benefits = [
@@ -38,7 +45,7 @@ const hiringSteps = [
     { title: 'Offer & Onboarding', description: 'We move fast. Expect an offer within a week of your final interview.' },
 ];
 
-const roles = ref([
+const roles = computed(() => props.roles ?? [
     { slug: 'senior-frontend-engineer', title: 'Senior Frontend Engineer', department: 'Engineering', location: 'Remote (Global)', workType: 'Full-time', description: 'Build beautiful, performant user interfaces for our product suite using Vue.js and TypeScript.' },
     { slug: 'backend-engineer', title: 'Backend Engineer', department: 'Engineering', location: 'Remote (US/EU)', workType: 'Full-time', description: 'Design and implement scalable APIs and services powering the Kaabosh platform.' },
     { slug: 'product-designer', title: 'Product Designer', department: 'Design', location: 'Remote (Global)', workType: 'Full-time', description: 'Shape the user experience across our products from research through pixel-perfect delivery.' },
@@ -49,15 +56,15 @@ const roles = ref([
     { slug: 'sales-development-rep', title: 'Sales Development Representative', department: 'Sales', location: 'Remote (US)', workType: 'Full-time', description: 'Generate and qualify leads to fuel our growing sales pipeline.' },
 ]);
 
-const departments = computed(() => ['All', ...new Set(roles.value.map(r => r.department))]);
-const workTypes = computed(() => ['All', ...new Set(roles.value.map(r => r.workType))]);
+const departments = computed(() => ['All', ...new Set(roles.value.map((r: any) => r.department))]);
+const workTypes = computed(() => ['All', ...new Set(roles.value.map((r: any) => r.workType))]);
 
 const selectedDepartment = ref('All');
 const selectedWorkType = ref('All');
 const searchQuery = ref('');
 
 const filteredRoles = computed(() => {
-    return roles.value.filter(r => {
+    return roles.value.filter((r: any) => {
         const matchDept = selectedDepartment.value === 'All' || r.department === selectedDepartment.value;
         const matchType = selectedWorkType.value === 'All' || r.workType === selectedWorkType.value;
         const matchSearch = !searchQuery.value || r.title.toLowerCase().includes(searchQuery.value.toLowerCase()) || r.description.toLowerCase().includes(searchQuery.value.toLowerCase());
