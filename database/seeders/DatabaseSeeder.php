@@ -14,10 +14,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        if (! User::where('email', 'dev.abdo.shrief@gmail.com')->exists()) {
+            User::create([
+                'name' => 'Abdo Shrief',
+                'email' => 'dev.abdo.shrief@gmail.com',
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+            ]);
+        }
 
         $this->call([
             AnnouncementBarSeeder::class,
